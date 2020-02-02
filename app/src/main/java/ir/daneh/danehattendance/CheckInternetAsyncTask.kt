@@ -1,0 +1,40 @@
+package ir.daneh.danehattendance
+
+import android.app.AlertDialog
+import android.content.Context
+import android.os.AsyncTask
+import java.net.InetSocketAddress
+import java.io.IOException
+import java.net.Socket
+import kotlin.system.exitProcess
+
+class CheckInternetAsyncTask(context : Context) : AsyncTask<Void, Boolean, Boolean>() {
+    private val context = context
+    override fun doInBackground(vararg p0: Void?): Boolean {
+        return try {
+            val sock = Socket()
+            sock.connect(InetSocketAddress("8.8.8.8", 53), 1500)
+            sock.close()
+            publishProgress(true)
+            return true
+        } catch (e: IOException){
+            publishProgress(false)
+            false
+        }
+    }
+
+    override fun onProgressUpdate(vararg values: Boolean?) {
+        val alertDialogBuilder = AlertDialog.Builder(context)
+        alertDialogBuilder.setTitle("Internet Connection")
+        if(!values[0]!!){
+            alertDialogBuilder.setMessage("Not Connected!")
+            alertDialogBuilder.setPositiveButton("OK"){_,_->
+                exitProcess(-1)
+            }
+            val alertDialog = alertDialogBuilder.create()
+            alertDialog.show()
+        }
+
+
+    }
+}
