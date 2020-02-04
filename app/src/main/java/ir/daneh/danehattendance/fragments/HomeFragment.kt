@@ -47,22 +47,22 @@ class HomeFragment : Fragment(), ResultHandler {
         spinnerEvent = view.spinnerEvent
         val checkInternet = CheckInternetAsyncTask(view.context)
         val check = checkInternet.execute()
-        if(check.get()) {
+        if (check.get()) {
             getEventsResponse()
             val arrayAdapter = ArrayAdapter(
-            context!!, android.R.layout.simple_spinner_dropdown_item, eventName
-        )
-        spinnerEvent!!.adapter = arrayAdapter
-        spinnerEvent!!.onItemSelectedListener = MyOnItemSelected(context)
+                context!!, android.R.layout.simple_spinner_dropdown_item, eventName
+            )
+            spinnerEvent!!.adapter = arrayAdapter
+            spinnerEvent!!.onItemSelectedListener = MyOnItemSelected(context)
         }
 
-        if(!checkPermission()){
+        if (!checkPermission()) {
             requestPermission()
         }
         scannerView = view.scanner
         melicode = view.melicode
         val requestButton = view.btn_request
-        requestButton.setOnClickListener{
+        requestButton.setOnClickListener {
             Toast.makeText(context, "Clicked!", Toast.LENGTH_LONG).show()
             getResponse(melicode)
         }
@@ -75,8 +75,8 @@ class HomeFragment : Fragment(), ResultHandler {
 
     override fun onResume() {
         super.onResume()
-        if(checkPermission()){
-            if(scannerView == null){
+        if (checkPermission()) {
+            if (scannerView == null) {
                 scannerView = view?.scanner
             }
             scannerView?.setResultHandler(this)
@@ -88,14 +88,15 @@ class HomeFragment : Fragment(), ResultHandler {
         super.onDestroy()
         scannerView?.stopCamera()
     }
+
     private fun checkPermission(): Boolean {
-                return ContextCompat.checkSelfPermission(
+        return ContextCompat.checkSelfPermission(
             context!!,
             android.Manifest.permission.CAMERA
         ) == PackageManager.PERMISSION_GRANTED
     }
 
-        private fun requestPermission(){
+    private fun requestPermission() {
         ActivityCompat.requestPermissions(
             this.activity!!,
             arrayOf(
@@ -105,27 +106,28 @@ class HomeFragment : Fragment(), ResultHandler {
         )
     }
 
-    private fun getEventsResponse(){
-        val endPoint = "https://daneh.ir/index.php?option=com_fabrik&format=raw&task=plugin.userAjax&method=getEvents"
+    private fun getEventsResponse() {
+        val endPoint =
+            "https://daneh.ir/index.php?option=com_fabrik&format=raw&task=plugin.userAjax&method=getEvents"
         Log.i("test-app", "get ! $endPoint")
         MyAsyncTask(eventId, eventName, txtResponse).execute(endPoint)
     }
 
-    private fun getResponse(melicode: TextView?){
+    private fun getResponse(melicode: TextView?) {
         val melicode = melicode?.text
         val endPoint = "https://daneh.ir/index.php?option=com_fabrik" +
                 "&format=raw&task=plugin.userAjax&method=getIdFromMelliCode" +
-                "&meli_code="+melicode + "&event_number=" + eventName.indexOf(spinnerEvent?.selectedItem.toString())
+                "&meli_code=" + melicode + "&event_number=" + eventName.indexOf(spinnerEvent?.selectedItem.toString())
         Log.i("test-app", "get ! $endPoint")
         MyAsyncTask(eventId, eventName, txtResponse).execute(endPoint)
     }
 
 
-
     override fun handleResult(rawResult: Result?) {
-        val result : String? = rawResult?.text
+        val result: String? = rawResult?.text
         val vibrator = context?.getSystemService(
-            Context.VIBRATOR_SERVICE) as Vibrator
+            Context.VIBRATOR_SERVICE
+        ) as Vibrator
         if (Build.VERSION.SDK_INT >= 26) {
             vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
         } else {

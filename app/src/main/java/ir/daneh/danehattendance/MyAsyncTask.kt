@@ -14,7 +14,7 @@ class MyAsyncTask(
     private val eventId: ArrayList<Int>,
     private val eventName: ArrayList<String>,
     private val txtResponse: TextView
-) : AsyncTask<String, String, String>(){
+) : AsyncTask<String, String, String>() {
     override fun doInBackground(vararg params: String?): String {
         try {
             val url = URL(params[0])
@@ -26,25 +26,23 @@ class MyAsyncTask(
             publishProgress(inString)
 
 
-        }catch (ex:Exception)
-        {
+        } catch (ex: Exception) {
 
         }
         return ""
     }
+
     private fun convertStreamToString(inputStream: InputStream): String {
         val bufferReader = BufferedReader(InputStreamReader(inputStream))
-        var line:String?
+        var line: String?
         var allStrings = ""
         try {
-            do{
+            do {
                 line = bufferReader.readLine()
                 allStrings += line
-            }while (line != null)
+            } while (line != null)
 
-        }
-        catch (ex:Exception)
-        {
+        } catch (ex: Exception) {
 
         }
 
@@ -58,27 +56,35 @@ class MyAsyncTask(
         try {
             val json = JSONArray(values[0])
             val len = json.length()
-            for(index in 0 until len){
+            for (index in 0 until len) {
+
                 Log.i("test-app", "get ! ($index) : " + json.getJSONObject(index))
                 try {
                     eventId.add(json.getJSONObject(index).getInt("id"))
-                }
-                catch (ex:Exception)
-                {
+                } catch (ex: Exception) {
 
                 }
                 try {
                     eventName.add(json.getJSONObject(index).getString("label"))
+                    txtResponse.text = "بارگزاری انجام شد"
+                } catch (ex: Exception) {
+
                 }
-                catch (ex:Exception)
-                {
+                try {
+                    val result =json.getJSONObject(index).getString("result")
+                    when (result) {
+                        "exist!" -> txtResponse.text = "از قبل موجود می باشد!"
+                        "added!" -> txtResponse.text = "اضافه شد!"
+                        "invalid event!" -> txtResponse.text = "لطفا یک رویداد را از بالا انتخاب نمایید"
+                        "invalid QrCode!" -> txtResponse.text = "کد ملی اشتباه می باشد یا کاربر موجود نیست!"
+                        else -> txtResponse.text = "خطای ناشناخته!"
+                    }
+                } catch (ex: Exception) {
 
                 }
             }
-            txtResponse.text = json.getString(0)
-        }
-        catch (ex:Exception)
-        {
+//                txtResponse.text = json.getString(0)
+        } catch (ex: Exception) {
             txtResponse.text = ""
         }
 
