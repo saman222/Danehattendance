@@ -8,8 +8,7 @@ import java.io.IOException
 import java.net.Socket
 import kotlin.system.exitProcess
 
-class CheckInternetAsyncTask(context : Context) : AsyncTask<Void, Boolean, Boolean>() {
-    private val context = context
+class CheckInternetAsyncTask(private val context: Context) : AsyncTask<Void, Boolean, Boolean>() {
     override fun doInBackground(vararg p0: Void?): Boolean {
         return try {
             val sock = Socket()
@@ -17,7 +16,7 @@ class CheckInternetAsyncTask(context : Context) : AsyncTask<Void, Boolean, Boole
             sock.close()
             publishProgress(true)
             return true
-        } catch (e: IOException){
+        } catch (e: IOException) {
             publishProgress(false)
             false
         }
@@ -26,9 +25,10 @@ class CheckInternetAsyncTask(context : Context) : AsyncTask<Void, Boolean, Boole
     override fun onProgressUpdate(vararg values: Boolean?) {
         val alertDialogBuilder = AlertDialog.Builder(context)
         alertDialogBuilder.setTitle("Internet Connection")
-        if(!values[0]!!){
+        alertDialogBuilder.setCancelable(false)
+        if (!values[0]!!) {
             alertDialogBuilder.setMessage("Not Connected!")
-            alertDialogBuilder.setPositiveButton("OK"){_,_->
+            alertDialogBuilder.setPositiveButton(context.resources.getString(android.R.string.ok)) { _, _ ->
                 exitProcess(-1)
             }
             val alertDialog = alertDialogBuilder.create()

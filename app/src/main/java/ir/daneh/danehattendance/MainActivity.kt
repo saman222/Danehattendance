@@ -1,194 +1,136 @@
 package ir.daneh.danehattendance
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.pm.PackageManager
-import android.os.*
-import android.util.Log
-import android.widget.*
+import android.os.Bundle
+import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.google.zxing.Result
-import kotlinx.android.synthetic.main.activity_main.*
-import java.net.HttpURLConnection
-import java.io.InputStreamReader
-import java.io.BufferedReader
-import java.io.InputStream
-import java.net.URL
-import org.json.JSONArray
-import me.dm7.barcodescanner.zxing.ZXingScannerView
-import me.dm7.barcodescanner.zxing.ZXingScannerView.ResultHandler
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import ir.daneh.danehattendance.adapter.PagerViewAdapter
 
 
+class MainActivity : AppCompatActivity() {
 
-class MainActivity : AppCompatActivity(), ResultHandler {
 
-    var eventId: ArrayList<Int> = arrayListOf(0)
-    var eventName: ArrayList<String> = arrayListOf("")
-    var scannerView: ZXingScannerView? = null
-    var eventSpinnerIndex = 0
-    val REQUEST_CAMERA = 1
+    private lateinit var mViewPager: ViewPager
+    private lateinit var homeBtn: ImageButton
+    private lateinit var searchBtn: ImageButton
+    private lateinit var addBtn: ImageButton
+    private lateinit var notificationBtn: ImageButton
+    private lateinit var personBtn: ImageButton
+    private lateinit var mPagerAdapter: PagerAdapter
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        runOnUiThread {
-            val checkInternet = CheckInternetAsyncTask(this)
-            val check = checkInternet.execute()
-            if(check.get())
-                getEventsResponse()
-        }
-        //val eventArray = arrayOf("", "Event 1", "Event 2", "Event 3")
-        val arrayAdapter = ArrayAdapter(
-            this@MainActivity, android.R.layout.simple_spinner_dropdown_item, eventName
-        )
-        spinnerEvent.adapter = arrayAdapter
-        spinnerEvent.onItemSelectedListener = MyOnItemSelected(this@MainActivity)
-        if (!checkPermission()) {
-            requestPermission()
-        }
-        scannerView = findViewById(R.id.scanner)
-        val requestButton = findViewById<Button>(R.id.btn_request)
-        requestButton.setOnClickListener{
-            Toast.makeText(this@MainActivity, "Clicked!", Toast.LENGTH_LONG).show()
-            getResponse()
-        }
-    }
+        mViewPager = findViewById(R.id.mViewPager)
+        homeBtn = findViewById(R.id.homeBtn)
+        searchBtn = findViewById(R.id.searchBtn)
+        addBtn = findViewById(R.id.addBtn)
+        notificationBtn = findViewById(R.id.notificationBtn)
+        personBtn = findViewById(R.id.personBtn)
+        mPagerAdapter = PagerViewAdapter(supportFragmentManager)
+        mViewPager.adapter = mPagerAdapter
+        mViewPager.offscreenPageLimit = 5
 
-    override fun onResume() {
-        super.onResume()
-        if(checkPermission()){
-            if(scannerView == null){
-                scannerView = findViewById(R.id.scanner)
-                setContentView(R.layout.activity_main)
+
+        homeBtn.setOnClickListener {
+            mViewPager.currentItem = 0
+
+        }
+
+        searchBtn.setOnClickListener {
+
+            mViewPager.currentItem = 1
+
+        }
+
+        addBtn.setOnClickListener {
+            mViewPager.currentItem = 2
+
+        }
+
+        notificationBtn.setOnClickListener {
+            mViewPager.currentItem = 3
+
+        }
+
+        personBtn.setOnClickListener {
+            mViewPager.currentItem = 4
+
+        }
+
+        mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+
+            override fun onPageScrollStateChanged(state: Int) {
             }
-            scannerView?.setResultHandler(this)
-            scannerView?.startCamera()
-        }
-    }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        scannerView?.stopCamera()
-
-    }
-
-    override fun handleResult(rawResult: Result?) {
-        val result : String? = rawResult?.text
-        val vibrator = applicationContext.getSystemService(
-            Context.VIBRATOR_SERVICE) as Vibrator
-        if (Build.VERSION.SDK_INT >= 26) {
-            vibrator.vibrate(VibrationEffect.createOneShot(500, VibrationEffect.DEFAULT_AMPLITUDE))
-        } else {
-            @Suppress("DEPRECATION")
-            vibrator.vibrate(500)
-        }
-        melicode.text = result
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera()
-    }
-
-    private fun checkPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this@MainActivity,
-            android.Manifest.permission.CAMERA
-        ) == PackageManager.PERMISSION_GRANTED
-    }
-
-    private fun requestPermission(){
-        ActivityCompat.requestPermissions(
-            this,
-            arrayOf(
-                android.Manifest.permission.CAMERA
-            ),
-            REQUEST_CAMERA
-        )
-    }
-
-    private fun getResponse(){
-        val melicode = melicode.text
-        val endPoint = "https://daneh.ir/index.php?option=com_fabrik" +
-                "&format=raw&task=plugin.userAjax&method=getIdFromMelliCode" +
-                "&meli_code="+melicode + "&event_number=" + eventId[eventSpinnerIndex]
-        Log.i("test", "get ! $endPoint")
-        MyAsyncTask().execute(endPoint)
-    }
-    private fun getEventsResponse(){
-        val endPoint = "https://daneh.ir/index.php?option=com_fabrik&format=raw&task=plugin.userAjax&method=getEvents"
-        Log.i("test", "get ! $endPoint")
-        MyAsyncTask().execute(endPoint)
-    }
-    @SuppressLint("StaticFieldLeak")
-    inner class MyAsyncTask: AsyncTask<String, String, String>(){
-        override fun doInBackground(vararg params: String?): String {
-            try {
-                val url = URL(params[0])
-
-                val urlConnect = url.openConnection() as HttpURLConnection
-                urlConnect.connectTimeout = 10000
-
-                val inString = convertStreamToString(urlConnect.inputStream)
-                publishProgress(inString)
-
-
-            }catch (ex:Exception)
-            {
-
-            }
-            return ""
-        }
-        private fun convertStreamToString(inputStream: InputStream): String {
-            val bufferReader = BufferedReader(InputStreamReader(inputStream))
-            var line:String?
-            var allStrings = ""
-            try {
-                do{
-                    line = bufferReader.readLine()
-                    allStrings += line
-                }while (line != null)
-
-            }
-            catch (ex:Exception)
-            {
+            override fun onPageScrolled(
+                position: Int,
+                positionOffset: Float,
+                positionOffsetPixels: Int
+            ) {
 
             }
 
-            return allStrings
+            override fun onPageSelected(position: Int) {
+                changingTabs(position)
+            }
+        })
+
+        // default tab
+
+        mViewPager.currentItem = 0
+        homeBtn.setImageResource(R.drawable.ic_home_pink)
+
+
+    }
+
+
+
+
+
+
+
+
+    private fun changingTabs(position: Int) {
+        when (position) {
+            0 -> {
+                homeBtn.setImageResource(R.drawable.ic_home_pink)
+                searchBtn.setImageResource(R.drawable.ic_search_black)
+                addBtn.setImageResource(R.drawable.ic_add_black)
+                notificationBtn.setImageResource(R.drawable.ic_notifications_none_black)
+                personBtn.setImageResource(R.drawable.ic_person_outline_black)
+            }
+            1 -> {
+                homeBtn.setImageResource(R.drawable.ic_home_black)
+                searchBtn.setImageResource(R.drawable.ic_search_pink)
+                addBtn.setImageResource(R.drawable.ic_add_black)
+                notificationBtn.setImageResource(R.drawable.ic_notifications_none_black)
+                personBtn.setImageResource(R.drawable.ic_person_outline_black)
+            }
+            2 -> {
+                homeBtn.setImageResource(R.drawable.ic_home_black)
+                searchBtn.setImageResource(R.drawable.ic_search_black)
+                addBtn.setImageResource(R.drawable.ic_add_pink)
+                notificationBtn.setImageResource(R.drawable.ic_notifications_none_black)
+                personBtn.setImageResource(R.drawable.ic_person_outline_black)
+            }
+            3 -> {
+                homeBtn.setImageResource(R.drawable.ic_home_black)
+                searchBtn.setImageResource(R.drawable.ic_search_black)
+                addBtn.setImageResource(R.drawable.ic_add_black)
+                notificationBtn.setImageResource(R.drawable.ic_notifications_none_pink)
+                personBtn.setImageResource(R.drawable.ic_person_outline_black)
+            }
+            4 -> {
+                homeBtn.setImageResource(R.drawable.ic_home_black)
+                searchBtn.setImageResource(R.drawable.ic_search_black)
+                addBtn.setImageResource(R.drawable.ic_add_black)
+                notificationBtn.setImageResource(R.drawable.ic_notifications_none_black)
+                personBtn.setImageResource(R.drawable.ic_person_outline_pink)
+            }
         }
 
-
-        override fun onProgressUpdate(vararg values: String?) {
-//            super.onProgressUpdate(*values)
-//            Log.i("test", "get !")
-            try {
-                val json = JSONArray(values[0])
-                val len = json.length()
-                for(index in 0 until len){
-                    Log.i("test", "get ! ($index) : " + json.getJSONObject(index))
-                    try {
-                        eventId.add(json.getJSONObject(index).getInt("id"))
-                    }
-                    catch (ex:Exception)
-                    {
-
-                    }
-                    try {
-                        eventName.add(json.getJSONObject(index).getString("label"))
-                    }
-                    catch (ex:Exception)
-                    {
-
-                    }
-                }
-                txt_response.text = json.getString(0)
-            }
-            catch (ex:Exception)
-            {
-                txt_response.text = ""
-            }
-
-        }
     }
 }
