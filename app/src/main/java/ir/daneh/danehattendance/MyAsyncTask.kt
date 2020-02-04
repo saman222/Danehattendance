@@ -66,7 +66,7 @@ class MyAsyncTask(
                 }
                 try {
                     eventName.add(json.getJSONObject(index).getString("label"))
-                    txtResponse.text = "بارگزاری انجام شد"
+                    txtResponse.text = "بارگذاری انجام شد"
                 } catch (ex: Exception) {
 
                 }
