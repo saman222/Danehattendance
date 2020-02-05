@@ -28,66 +28,49 @@
             android:id="@+id/homeBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:background="@android:color/white"
-            android:padding="15dp"
             android:src="@drawable/ic_home_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp"
+            android:layout_weight="0.2"/>
 
         <ImageButton
             android:id="@+id/searchBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:background="@android:color/white"
-            android:padding="15dp"
             android:src="@drawable/ic_search_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp"
+            android:layout_weight="0.2"/>
 
 
         <ImageButton
             android:id="@+id/addBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
             android:background="@android:color/white"
-            android:padding="15dp"
             android:src="@drawable/ic_add_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp"
+            android:layout_weight="0.2"/>
 
 
         <ImageButton
             android:id="@+id/notificationBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginStart="5dp"
             android:background="@android:color/white"
-            android:padding="15dp"
             android:src="@drawable/ic_notifications_none_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp"
+            android:layout_weight="0.2"/>
 
 
         <ImageButton
             android:id="@+id/personBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_marginEnd="40dp"
             android:background="@android:color/white"
-            android:padding="15dp"
             android:src="@drawable/ic_person_outline_black"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:padding="10dp"
+            android:layout_weight="0.2"/>
 
     </LinearLayout>
 
