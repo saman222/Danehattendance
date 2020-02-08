@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Daneh attendance</string>
+    <string name="select_an_event">لطفا یک رویداد انتخاب کنید</string>
+    <string name="added">اضافه شد!</string>
+    <string name="exist">از قبل موجود می باشد!</string>
+    <string name="select_top_event">لطفا یک رویداد را از بالا انتخاب نمایید</string>
+    <string name="invalid">کد ملی اشتباه می باشد یا کاربر موجود نیست!</string>
+    <string name="unknown_error">خطای ناشناخته!</string>
+    <string name="attend">ثبت</string>
 </resources>

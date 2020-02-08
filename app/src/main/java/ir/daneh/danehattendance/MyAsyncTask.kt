@@ -71,13 +71,12 @@ class MyAsyncTask(
 
                 }
                 try {
-                    val result =json.getJSONObject(index).getString("result")
-                    when (result) {
-                        "exist!" -> txtResponse.text = "از قبل موجود می باشد!"
-                        "added!" -> txtResponse.text = "اضافه شد!"
-                        "invalid event!" -> txtResponse.text = "لطفا یک رویداد را از بالا انتخاب نمایید"
-                        "invalid QrCode!" -> txtResponse.text = "کد ملی اشتباه می باشد یا کاربر موجود نیست!"
-                        else -> txtResponse.text = "خطای ناشناخته!"
+                    when (json.getJSONObject(index).getString("result")) {
+                        "exist!" -> txtResponse.setText(R.string.exist).toString()
+                        "added!" -> txtResponse.setText(R.string.added).toString()
+                        "invalid event!" -> txtResponse.setText(R.string.select_top_event)
+                        "invalid QrCode!" -> txtResponse.setText(R.string.invalid)
+                        else -> txtResponse.setText(R.string.unknown_error).toString()
                     }
                 } catch (ex: Exception) {
 
