@@ -31,7 +31,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView.ResultHandler
  */
 class HomeFragment : Fragment(), ResultHandler {
     private var eventId: ArrayList<Int> = arrayListOf(0)
-    private var eventName: ArrayList<String> = arrayListOf("")
+    private var eventName: ArrayList<String>? = null
     private var scannerView: ZXingScannerView? = null
     private var melicode: TextView? = null
     private var spinnerEvent: Spinner? = null
@@ -41,6 +41,8 @@ class HomeFragment : Fragment(), ResultHandler {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        Log.i("test-app", "onCreateView")
+        eventName = arrayListOf(resources.getString(R.string.select_an_event))
         // Inflate the layout for this fragment
         val view: View = inflater.inflate(R.layout.fragment_home, container, false)
         txtResponse = view.txt_response
@@ -50,7 +52,7 @@ class HomeFragment : Fragment(), ResultHandler {
         if (check.get()) {
             getEventsResponse()
             val arrayAdapter = ArrayAdapter(
-                context!!, android.R.layout.simple_spinner_dropdown_item, eventName
+                context!!, android.R.layout.simple_spinner_dropdown_item, eventName!!
             )
             spinnerEvent!!.adapter = arrayAdapter
             spinnerEvent!!.onItemSelectedListener = MyOnItemSelected(context)
@@ -74,6 +76,7 @@ class HomeFragment : Fragment(), ResultHandler {
     }
 
     override fun onResume() {
+        Log.i("test-app", "onResume")
         super.onResume()
         if (checkPermission()) {
             if (scannerView == null) {
@@ -84,8 +87,21 @@ class HomeFragment : Fragment(), ResultHandler {
         }
     }
 
+    override fun onDestroyView() {
+        Log.i("test-app", "onDestroyView")
+        super.onDestroyView()
+        scannerView?.stopCamera()
+    }
+
     override fun onDestroy() {
+        Log.i("test-app", "onDestroy")
         super.onDestroy()
+        scannerView?.stopCamera()
+    }
+
+    override fun onPause() {
+        Log.i("test-app", "onPause")
+        super.onPause()
         scannerView?.stopCamera()
     }
 
@@ -110,16 +126,16 @@ class HomeFragment : Fragment(), ResultHandler {
         val endPoint =
             "https://daneh.ir/index.php?option=com_fabrik&format=raw&task=plugin.userAjax&method=getEvents"
         Log.i("test-app", "get ! $endPoint")
-        MyAsyncTask(eventId, eventName, txtResponse).execute(endPoint)
+        MyAsyncTask(eventId, eventName!!, txtResponse).execute(endPoint)
     }
 
     private fun getResponse(melicode: TextView?) {
         val melicode = melicode?.text
         val endPoint = "https://daneh.ir/index.php?option=com_fabrik" +
                 "&format=raw&task=plugin.userAjax&method=getIdFromMelliCode" +
-                "&meli_code=" + melicode + "&event_number=" + eventName.indexOf(spinnerEvent?.selectedItem.toString())
+                "&meli_code=" + melicode + "&event_number=" + eventName!!.indexOf(spinnerEvent?.selectedItem.toString())
         Log.i("test-app", "get ! $endPoint")
-        MyAsyncTask(eventId, eventName, txtResponse).execute(endPoint)
+        MyAsyncTask(eventId, eventName!!, txtResponse).execute(endPoint)
     }
 
 
