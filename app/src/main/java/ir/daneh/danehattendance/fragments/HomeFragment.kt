@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.util.Log
+import android.view.ContextThemeWrapper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,9 +43,13 @@ class HomeFragment : Fragment(), ResultHandler {
         savedInstanceState: Bundle?
     ): View? {
         Log.i("test-app", "onCreateView")
+        val contextThemeWrapper: Context =
+            ContextThemeWrapper(activity,android.R.style.Theme_Material_Light_NoActionBar)
+        val localInflater = inflater.cloneInContext(contextThemeWrapper)
+        val view: View = localInflater.inflate(R.layout.fragment_home, container, false)
+
         eventName = arrayListOf(resources.getString(R.string.select_an_event))
         // Inflate the layout for this fragment
-        val view: View = inflater.inflate(R.layout.fragment_home, container, false)
         txtResponse = view.txt_response
         spinnerEvent = view.spinnerEvent
         val checkInternet = CheckInternetAsyncTask(view.context)
@@ -82,27 +87,48 @@ class HomeFragment : Fragment(), ResultHandler {
             if (scannerView == null) {
                 scannerView = view?.scanner
             }
-            scannerView?.setResultHandler(this)
-            scannerView?.startCamera()
+            try{
+                scannerView?.setResultHandler(this)
+                scannerView?.startCamera()
+            }
+            catch (e: Exception){
+
+            }
+
         }
     }
 
     override fun onDestroyView() {
         Log.i("test-app", "onDestroyView")
         super.onDestroyView()
-        scannerView?.stopCamera()
+        try{
+            scannerView?.stopCamera()
+        }
+        catch (e: Exception){
+
+        }
     }
 
     override fun onDestroy() {
         Log.i("test-app", "onDestroy")
         super.onDestroy()
-        scannerView?.stopCamera()
+        try{
+            scannerView?.stopCamera()
+        }
+        catch (e: Exception){
+
+        }
     }
 
     override fun onPause() {
         Log.i("test-app", "onPause")
         super.onPause()
-        scannerView?.stopCamera()
+        try{
+            scannerView?.stopCamera()
+        }
+        catch (e: Exception){
+
+        }
     }
 
     private fun checkPermission(): Boolean {
@@ -151,7 +177,12 @@ class HomeFragment : Fragment(), ResultHandler {
             vibrator.vibrate(500)
         }
         melicode?.text = result
-        scannerView?.setResultHandler(this)
-        scannerView?.startCamera()
+        try {
+            scannerView?.setResultHandler(this)
+            scannerView?.startCamera()
+        }
+        catch (e : Exception){
+
+        }
     }
 }
