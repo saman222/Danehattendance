@@ -2,12 +2,14 @@ package ir.daneh.danehattendance.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.fragment.app.Fragment
 import android.widget.ArrayAdapter
 import android.widget.SearchView
 
 import ir.daneh.danehattendance.R
+import ir.daneh.danehattendance.asynctasks.GetAttendedUserAsyncTask
 import kotlinx.android.synthetic.main.fragment_search.view.*
 
 /**
@@ -23,15 +25,24 @@ class SearchFragment : Fragment() {
         // Inflate the layout for this fragment
         val view = inflater.inflate(R.layout.fragment_search, container , false)
 
-        val listView = view.listViewSearch
-        val searchedItemArray = arrayOf("آیتم اول", "آیتم دوم", "آیتم سوم", "آیتم چهارم")
-        listViewAdapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, searchedItemArray)
-        listView.adapter = listViewAdapter
+
 
         setHasOptionsMenu(true)
         return view
     }
 
+    override fun onResume() {
+        Log.i("test-app", "onResume Search")
+        super.onResume()
+        val attendedUser = GetAttendedUserAsyncTask().execute()
+
+        val listView = view?.listViewSearch
+        val searchedItemArray = attendedUser.get()
+        listViewAdapter = ArrayAdapter<String>(context!!, android.R.layout.simple_list_item_1, searchedItemArray)
+        listView?.adapter = listViewAdapter
+
+
+    }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         inflater.inflate(R.menu.search_menu, menu)
