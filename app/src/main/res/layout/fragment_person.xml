@@ -13,6 +13,8 @@
         android:id="@+id/imageViewAvatar"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
         android:background="@drawable/sample_avatar"
         android:scaleType="centerCrop"
         app:layout_constraintBottom_toTopOf="@+id/guideline3"
@@ -32,7 +34,7 @@
         android:textStyle="bold"
         app:layout_constraintBottom_toTopOf="@+id/textViewName"
         app:layout_constraintEnd_toStartOf="@+id/guideline2"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewAvatar" />
+        app:layout_constraintTop_toBottomOf="@+id/guideline3" />
     <TextView
         android:id="@+id/textViewName"
         android:layout_width="0dp"
