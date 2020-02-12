@@ -19,8 +19,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.zxing.Result
-import ir.daneh.danehattendance.CheckInternetAsyncTask
-import ir.daneh.danehattendance.MyAsyncTask
+import ir.daneh.danehattendance.asynctasks.CheckInternetAsyncTask
+import ir.daneh.danehattendance.asynctasks.MyAsyncTask
 import ir.daneh.danehattendance.MyOnItemSelected
 import ir.daneh.danehattendance.R
 import kotlinx.android.synthetic.main.fragment_home.view.*
@@ -52,7 +52,8 @@ class HomeFragment : Fragment(), ResultHandler {
         // Inflate the layout for this fragment
         txtResponse = view.txt_response
         spinnerEvent = view.spinnerEvent
-        val checkInternet = CheckInternetAsyncTask(view.context)
+        val checkInternet =
+            CheckInternetAsyncTask(view.context)
         val check = checkInternet.execute()
         if (check.get()) {
             getEventsResponse()
@@ -70,7 +71,7 @@ class HomeFragment : Fragment(), ResultHandler {
         melicode = view.melicode
         val requestButton = view.btn_request
         requestButton.setOnClickListener {
-            Toast.makeText(context, "Clicked!", Toast.LENGTH_LONG).show()
+            //Toast.makeText(context, "Clicked!", Toast.LENGTH_LONG).show()
             getResponse(melicode)
         }
 
@@ -152,7 +153,11 @@ class HomeFragment : Fragment(), ResultHandler {
         val endPoint =
             "https://daneh.ir/index.php?option=com_fabrik&format=raw&task=plugin.userAjax&method=getEvents"
         Log.i("test-app", "get ! $endPoint")
-        MyAsyncTask(eventId, eventName!!, txtResponse).execute(endPoint)
+        MyAsyncTask(
+            eventId,
+            eventName!!,
+            txtResponse
+        ).execute(endPoint)
     }
 
     private fun getResponse(melicode: TextView?) {
@@ -161,7 +166,11 @@ class HomeFragment : Fragment(), ResultHandler {
                 "&format=raw&task=plugin.userAjax&method=getIdFromMelliCode" +
                 "&meli_code=" + melicode + "&event_number=" + eventName!!.indexOf(spinnerEvent?.selectedItem.toString())
         Log.i("test-app", "get ! $endPoint")
-        MyAsyncTask(eventId, eventName!!, txtResponse).execute(endPoint)
+        MyAsyncTask(
+            eventId,
+            eventName!!,
+            txtResponse
+        ).execute(endPoint)
     }
 
 

@@ -11,7 +11,7 @@ class MyOnItemSelected(private val context: Context?) : AdapterView.OnItemSelect
     }
 
     override fun onItemSelected(p0: AdapterView<*>?, p1: View?, position: Int, id: Long) {
-        Toast.makeText(context, "Selected value : $position", Toast.LENGTH_LONG).show()
+        //Toast.makeText(context, "Selected value : $position", Toast.LENGTH_LONG).show()
         //mainActivity.eventSpinnerIndex = position
     }
 }
