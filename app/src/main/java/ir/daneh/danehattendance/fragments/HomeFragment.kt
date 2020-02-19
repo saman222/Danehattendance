@@ -164,7 +164,7 @@ class HomeFragment : Fragment(), ResultHandler {
         val melicode = melicode?.text
         val endPoint = "https://daneh.ir/index.php?option=com_fabrik" +
                 "&format=raw&task=plugin.userAjax&method=getIdFromMelliCode" +
-                "&meli_code=" + melicode + "&event_number=" + eventName!!.indexOf(spinnerEvent?.selectedItem.toString())
+                "&meli_code=" + melicode + "&event_number=" + eventId[eventName!!.indexOf(spinnerEvent?.selectedItem)]
         Log.i("test-app", "get ! $endPoint")
         MyAsyncTask(
             eventId,
